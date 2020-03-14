@@ -90,7 +90,7 @@ class EventListener implements Listener
                         $attackedTeam->setBedDestroyed();
                         $teamOfPlayer = API::getTeamOfPlayer($entity);//TODO test if still happens in setup
                         if (is_null($teamOfPlayer)) {
-                            var_dump("Still happens");
+                            Loader::getInstance()->getLogger()->debug("Team of player was found null.");
                             $event->setCancelled(false);
                             return;
                         }
@@ -104,7 +104,6 @@ class EventListener implements Listener
                         $spk->volume = 1;
                         $spk->pitch = 0.0;
                         $spk->soundName = "mob.enderdragon.end";
-                        var_dump($spk);
                         $entity->getLevel()->broadcastGlobalPacket($spk);
                         #if (count($arena->getPlayers()) <= 1) $arena->stopArena();
                     }

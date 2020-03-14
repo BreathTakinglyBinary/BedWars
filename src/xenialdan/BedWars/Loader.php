@@ -80,10 +80,8 @@ class Loader extends Game
     public function getNewArena(string $settingsPath): Arena
     {
         $settings = new BedwarsSettings($settingsPath);
-        var_dump($settings->gold, $settings->get("gold"));
         $levelname = basename($settingsPath, ".json");
         $arena = new Arena($levelname, $this, $settings);
-        var_dump($settings->teams, $settings->get("teams"));
         foreach ($settings->get("teams", []) as $teamname => $teaminfo) {
             $team = new BedwarsTeam($teaminfo["color"] ?? TextFormat::RESET, $teamname);
             $team->setMinPlayers(1);
@@ -95,7 +93,6 @@ class Loader extends Game
                     $teaminfo["spawn"]["z"] ?? $arena->getLevel()->getSpawnLocation()->getFloorZ()
                 )
             );
-            var_dump($team);
             $arena->addTeam($team);
         }
         return $arena;

@@ -13,6 +13,7 @@ use pocketmine\item\ItemIds;
 use pocketmine\network\mcpe\protocol\PlaySoundPacket;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
+use xenialdan\BedWars\ui\shop\ShopMainMenu;
 use xenialdan\customui\elements\Button;
 use xenialdan\customui\windows\SimpleForm;
 use xenialdan\gameapi\API;
@@ -27,41 +28,22 @@ use xenialdan\gameapi\Team;
 class EventListener implements Listener
 {
 
-    public function onDamage(EntityDamageEvent $event)
-    {
-        if (API::isArenaOf(Loader::getInstance(), $event->getEntity()->getLevel())) {
-            if (!$event->getEntity() instanceof Player) {
-                $event->setCancelled();
-                if ($event instanceof EntityDamageByEntityEvent) {
-                    if (($damager = $event->getDamager()) instanceof Player) {
-                        if ($event->getEntity() instanceof Villager) {
-                            if (($arena = API::getArenaByLevel(Loader::getInstance(), $event->getEntity()->getLevel())) instanceof Arena) {
-                                if ($arena->getState() !== Arena::INGAME /*&& $arena->getState() !== Arena::SETUP*/) {
-                                    $event->setCancelled();
-                                    return;
-                                }
-                                Loader::getInstance()->openShop($damager);
-                            }
-                        }
-                    }
-                }
-            }
+    public function onDamage(EntityDamageByEntityEvent $event){
+        $damager = $event->getDamager();
+        if(!$damager instanceof Player){
             return;
-        }/*
-        if (API::isArena(Loader::getInstance(), ($entity = $event->getEntity())->getLevel()) && API::isPlaying($entity, Loader::getInstance())) {
-        if (!($arena = API::getArenaByLevel(Loader::getInstance(), $entity->getLevel())) instanceof Arena) return;
-            if ($arena->getState() !== Arena::INGAME && $arena->getState() !== Arena::SETUP) {
-                $event->setCancelled();
-                return;
-            }
-            if ($event instanceof EntityDamageByEntityEvent) {
-                if (($damager = $event->getDamager()) instanceof Player) {
-                    if (API::getTeamOfPlayer($entity)->inTeam($damager))
-                        $event->setCancelled();
-                    return;
-                }
-            }
-        }*/
+        }
+
+        if(!$event->getEntity() instanceof Villager){
+            return;
+        }
+
+        $arena = API::getArenaOfPlayer($damager);
+        if(!$arena instanceof Arena or !API::isArenaOf(Loader::getInstance(), $arena->getLevel()) or $arena->getState() !== Arena::INGAME){
+            return;
+        }
+        $event->setCancelled();
+        $damager->sendForm(new ShopMainMenu());
     }
 
     public function onBlockBreakEvent(BlockBreakEvent $event)

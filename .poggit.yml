@@ -6,8 +6,8 @@ projects:
     path: ""
     icon: "resources/xbedwars_icon_square_small.png"
     libs:
-    - src: thebigsmilexd/customui/customui
-      version: ^3.0.0
+    - src: BreathTakinglyBinary/libDynamicForms/libDynamicForms
+      version: ^1.1.0
     - src: thebigsmilexd/gameapi/gameapi
       version: ^4.0.4
     - src: muqsit/invmenu/InvMenu

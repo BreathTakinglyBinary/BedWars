@@ -2,21 +2,14 @@
 
 namespace xenialdan\BedWars;
 
-use muqsit\invmenu\inventories\BaseFakeInventory;
-use muqsit\invmenu\InvMenu;
-use muqsit\invmenu\InvMenuHandler;
 use pocketmine\block\BlockIds;
 use pocketmine\entity\Entity;
 use pocketmine\entity\object\ItemEntity;
 use pocketmine\entity\object\PrimedTNT;
 use pocketmine\entity\projectile\Arrow;
-use pocketmine\inventory\transaction\action\SlotChangeAction;
-use pocketmine\item\enchantment\Enchantment;
-use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\Item;
 use pocketmine\item\ItemFactory;
 use pocketmine\item\ItemIds;
-use pocketmine\item\Potion;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
@@ -64,7 +57,6 @@ class Loader extends Game
 
     public function onEnable()
     {
-        if (!InvMenuHandler::isRegistered()) InvMenuHandler::register($this);
         $this->getServer()->getPluginManager()->registerEvents(new EventListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new JoinGameListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new LeaveGameListener(), $this);
@@ -73,6 +65,7 @@ class Loader extends Game
         /** @noinspection PhpUnhandledExceptionInspection */
         API::registerGame($this);
         foreach (glob($this->getDataFolder() . "*.json") as $v) {
+            $this->getLogger()->info("Adding arena " . basename($v, ".json"));
             $this->addArena($this->getNewArena($v));
         }
     }
@@ -449,232 +442,8 @@ class Loader extends Game
         return $entity instanceof ItemEntity || $entity instanceof PrimedTNT || $entity instanceof Arrow;
     }
 
-    public function openShop(Player $player)
+    public static function buyItem(Item $item, Player $player, string $valueType, int $value): bool
     {
-        $menu = InvMenu::create(InvMenu::TYPE_CHEST)->setName(TextFormat::RED . "Bed" . TextFormat::WHITE . "Wars " . TextFormat::RESET . "Shop")->readonly();
-        $menu->getInventory()->setContents([
-            Item::get(ItemIds::CHAIN_CHESTPLATE)->setCustomName("Armor"),
-            Item::get(ItemIds::SANDSTONE)->setCustomName("Blocks"),
-            Item::get(ItemIds::STONE_PICKAXE)->setCustomName("Pickaxes"),
-            Item::get(ItemIds::STONE_SWORD)->setCustomName("Weapons"),
-            Item::get(ItemIds::BOW)->setCustomName("Bows"),
-            Item::get(ItemIds::POTION)->setCustomName("Other")
-        ]);
-        $menu->setListener(function (Player $player, Item $clicked, Item $clickedWith, SlotChangeAction $action): bool {
-            switch ($clicked->getId()) {
-                case ItemIds::CHAIN_CHESTPLATE:
-                    $this->openShopArmor($player);
-                    break;
-                case ItemIds::SANDSTONE:
-                    $this->openShopBlock($player);
-                    break;
-                case ItemIds::STONE_PICKAXE:
-                    $this->openShopPickaxe($player);
-                    break;
-                case ItemIds::STONE_SWORD:
-                    $this->openShopWeapons($player);
-                    break;
-                case ItemIds::BOW:
-                    $this->openShopBow($player);
-                    break;
-                case ItemIds::POTION:
-                    $this->openShopSpecial($player);
-                    break;
-            }
-            return true;
-        });
-        $menu->send($player);
-    }
-
-    private function openShopArmor(Player $player)
-    {
-        $menu = InvMenu::create(InvMenu::TYPE_CHEST)->setName("Armor shop")->readonly();
-        $menu->setInventoryCloseListener($this->subToMainShop());
-        //enchanted and colored items
-        $lc = $this->generateShopItem(Item::get(ItemIds::LEATHER_CAP), 1, 2 * 1, self::BRONZE);
-        $lc = API::setCustomColor($lc, API::colorFromTextFormat(API::getTeamOfPlayer($player)->getColor()));
-        $lp = $this->generateShopItem(Item::get(ItemIds::LEATHER_PANTS), 1, 2 * 1, self::BRONZE);
-        $lp = API::setCustomColor($lp, API::colorFromTextFormat(API::getTeamOfPlayer($player)->getColor()));
-        $lb = $this->generateShopItem(Item::get(ItemIds::LEATHER_BOOTS), 1, 2 * 1, self::BRONZE);
-        $lb = API::setCustomColor($lb, API::colorFromTextFormat(API::getTeamOfPlayer($player)->getColor()));
-        $c1 = $this->generateShopItem(Item::get(ItemIds::CHAIN_CHESTPLATE), 1, 2 * 1, self::SILVER);
-        $c1->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::PROTECTION)));
-        $c1->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::UNBREAKING)));
-        $c2 = $this->generateShopItem(Item::get(ItemIds::CHAIN_CHESTPLATE), 1, 4 * 1, self::SILVER);
-        $c2->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::PROTECTION), 2));
-        $c2->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::UNBREAKING)));
-
-        $menu->getInventory()->setContents([
-            $lc,
-            $this->generateShopItem(Item::get(ItemIds::CHAIN_CHESTPLATE), 1, 1 * 1, self::SILVER),
-            $lp,
-            $lb,
-            $c1,
-            $c2
-        ]);
-        $menu->setListener(function (Player $player, Item $clicked, Item $clickedWith, SlotChangeAction $action): bool {
-            $this->buyItem($clicked, $player);
-            return true;
-        });
-        $menu->send($player);
-    }
-
-    private function openShopBlock(Player $player)
-    {
-        $menu = InvMenu::create(InvMenu::TYPE_CHEST)->setName("Block shop")->readonly();
-        $menu->setInventoryCloseListener($this->subToMainShop());
-        $menu->getInventory()->setContents([
-            $this->generateShopItem(Item::get(ItemIds::SANDSTONE), 4, 0.5 * 4, self::BRONZE),
-            $this->generateShopItem(Item::get(ItemIds::SANDSTONE), 16, 0.5 * 16, self::BRONZE),
-            $this->generateShopItem(Item::get(ItemIds::SANDSTONE), 32, 0.5 * 32, self::BRONZE),
-            $this->generateShopItem(Item::get(ItemIds::SANDSTONE), 64, 0.5 * 64, self::BRONZE),
-            $this->generateShopItem(Item::get(ItemIds::END_STONE), 1, 8 * 1, self::BRONZE),
-            $this->generateShopItem(Item::get(ItemIds::END_STONE), 4, 8 * 4, self::BRONZE),
-            $this->generateShopItem(Item::get(ItemIds::END_STONE), 16, 8 * 16, self::BRONZE),
-            $this->generateShopItem(Item::get(ItemIds::END_STONE), 32, 8 * 32, self::BRONZE)
-        ]);
-        $menu->setListener(function (Player $player, Item $clicked, Item $clickedWith, SlotChangeAction $action): bool {
-            $this->buyItem($clicked, $player);
-            return true;
-        });
-        $menu->send($player);
-    }
-
-    private function openShopPickaxe(Player $player)
-    {
-        $menu = InvMenu::create(InvMenu::TYPE_CHEST)->setName("Pickaxe shop")->readonly();
-        $menu->setInventoryCloseListener($this->subToMainShop());
-        //enchanted items
-        $ipe1 = $this->generateShopItem(Item::get(ItemIds::IRON_PICKAXE), 1, 8, self::SILVER);
-        $ipe1->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::EFFICIENCY)));
-        $gpe2 = $this->generateShopItem(Item::get(ItemIds::GOLD_PICKAXE), 1, 4, self::GOLD);
-        $gpe2->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::EFFICIENCY), 2));
-
-        $menu->getInventory()->setContents([
-            $this->generateShopItem(Item::get(ItemIds::STONE_PICKAXE), 1, 16, self::BRONZE),
-            $this->generateShopItem(Item::get(ItemIds::IRON_PICKAXE), 1, 4, self::SILVER),
-            $ipe1,
-            $gpe2
-        ]);
-        $menu->setListener(function (Player $player, Item $clicked, Item $clickedWith, SlotChangeAction $action): bool {
-            $this->buyItem($clicked, $player);
-            return true;
-        });
-        $menu->send($player);
-    }
-
-    private function openShopWeapons(Player $player)
-    {
-        $menu = InvMenu::create(InvMenu::TYPE_CHEST)->setName("Weapon shop")->readonly();
-        $menu->setInventoryCloseListener($this->subToMainShop());
-        //enchanted items
-        $kbs = $this->generateShopItem(Item::get(ItemIds::STICK), 1, 8, self::BRONZE);
-        $kbs->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::KNOCKBACK)));
-
-        $gs1 = $this->generateShopItem(Item::get(ItemIds::GOLD_SWORD), 1, 2, self::SILVER);
-        $gs1->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::UNBREAKING)));
-
-        $gs2 = $this->generateShopItem(Item::get(ItemIds::GOLD_SWORD), 1, 4, self::SILVER);
-        $gs2->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::UNBREAKING)));
-        $gs2->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::SHARPNESS)));;
-
-        $gs3 = $this->generateShopItem(Item::get(ItemIds::GOLD_SWORD), 1, 8, self::SILVER);
-        $gs3->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::UNBREAKING)));
-        $gs3->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::SHARPNESS), 2));;
-
-        $is1 = $this->generateShopItem(Item::get(ItemIds::IRON_SWORD), 1, 4, self::GOLD);
-        $is1->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::UNBREAKING)));
-        $is1->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::SHARPNESS)));
-
-        $menu->getInventory()->setContents([
-            $kbs,
-            $gs1,
-            $gs2,
-            $gs3,
-            $is1
-        ]);
-        $menu->setListener(function (Player $player, Item $clicked, Item $clickedWith, SlotChangeAction $action): bool {
-            $this->buyItem($clicked, $player);
-            return true;
-        });
-        $menu->send($player);
-    }
-
-    private function openShopBow(Player $player)
-    {
-        $menu = InvMenu::create(InvMenu::TYPE_CHEST)->setName("Bow shop")->readonly();
-        $menu->setInventoryCloseListener($this->subToMainShop());
-        //enchanted items
-        $b1 = $this->generateShopItem(Item::get(ItemIds::BOW), 1, 4, self::GOLD);
-        $b1->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::UNBREAKING)));
-
-        $b2 = $this->generateShopItem(Item::get(ItemIds::BOW), 1, 8, self::GOLD);
-        $b2->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::UNBREAKING)));
-        $b2->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::POWER)));
-
-        $b3 = $this->generateShopItem(Item::get(ItemIds::BOW), 1, 16, self::GOLD);
-        $b3->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::UNBREAKING)));
-        $b3->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::INFINITY)));
-
-        $menu->getInventory()->setContents([
-            $b1,
-            $b2,
-            $b3,
-            $this->generateShopItem(Item::get(ItemIds::ARROW), 4, 0.25 * 4, self::SILVER),
-            $this->generateShopItem(Item::get(ItemIds::ARROW), 8, 0.25 * 8, self::SILVER),
-            $this->generateShopItem(Item::get(ItemIds::ARROW), 16, 0.25 * 16, self::SILVER)
-        ]);
-        $menu->setListener(function (Player $player, Item $clicked, Item $clickedWith, SlotChangeAction $action): bool {
-            $this->buyItem($clicked, $player);
-            return true;
-        });
-        $menu->send($player);
-    }
-
-    private function openShopSpecial(Player $player)
-    {
-        $menu = InvMenu::create(InvMenu::TYPE_CHEST)->setName("Special shop")->readonly();
-        $menu->setInventoryCloseListener($this->subToMainShop());
-        $menu->getInventory()->setContents([
-            $this->generateShopItem(Item::get(ItemIds::ENDER_PEARL), 1, 4 * 1, self::GOLD),
-            $this->generateShopItem(Item::get(ItemIds::TNT), 1, 16 * 1, self::SILVER),
-            $this->generateShopItem(Item::get(ItemIds::POTION, Potion::STRONG_SWIFTNESS), 1, 4 * 1, self::SILVER),
-            $this->generateShopItem(Item::get(ItemIds::POTION, Potion::STRONG_STRENGTH), 1, 2 * 1, self::GOLD),
-            $this->generateShopItem(Item::get(ItemIds::SPLASH_POTION, Potion::SLOWNESS), 1, 4 * 1, self::SILVER),
-            $this->generateShopItem(Item::get(ItemIds::SPLASH_POTION, Potion::WEAKNESS), 1, 2 * 1, self::GOLD),
-            $this->generateShopItem(Item::get(ItemIds::SPLASH_POTION, Potion::POISON), 1, 2 * 1, self::GOLD),
-            $this->generateShopItem(Item::get(ItemIds::BUCKET, 1), 1, 2 * 1, self::SILVER),
-        ]);
-        $menu->setListener(function (Player $player, Item $clicked, Item $clickedWith, SlotChangeAction $action): bool {
-            $this->buyItem($clicked, $player);
-            return true;
-        });
-        $menu->send($player);
-    }
-
-    /**
-     * @return \Closure
-     */
-    private function subToMainShop(): \Closure
-    {
-        return function (Player $player, BaseFakeInventory $inventory) {
-            $player->removeWindow($inventory);
-            $this->openShop($player);
-        };
-    }
-
-    private function generateShopItem(Item $item, int $size, int $value, string $valueType = self::GOLD): Item
-    {
-        $item->setCount($size);
-        $item->setLore([$value . "x " . $valueType]);
-        return $item;
-    }
-
-    private function buyItem(Item $item, Player $player): bool
-    {
-        [$value, $valueType] = explode("x ", $item->getLore()[0] ?? "0x " . self::GOLD);
-        $value = intval($value);
-        if ($value < 1) return false;
         $item = $item->setLore([]);
         switch ($valueType) {
             case self::BRONZE:

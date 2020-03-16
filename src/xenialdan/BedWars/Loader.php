@@ -8,25 +8,15 @@ use pocketmine\entity\object\ItemEntity;
 use pocketmine\entity\object\PrimedTNT;
 use pocketmine\entity\projectile\Arrow;
 use pocketmine\item\Item;
-use pocketmine\item\ItemFactory;
 use pocketmine\item\ItemIds;
-use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\LevelEventPacket;
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 use pocketmine\Player;
-use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 use xenialdan\BedWars\commands\BedwarsCommand;
 use xenialdan\BedWars\task\SpawnItemsTask;
-use xenialdan\customui\elements\Button;
-use xenialdan\customui\elements\Input;
-use xenialdan\customui\elements\Label;
-use xenialdan\customui\elements\StepSlider;
-use xenialdan\customui\windows\CustomForm;
-use xenialdan\customui\windows\ModalForm;
-use xenialdan\customui\windows\SimpleForm;
 use xenialdan\gameapi\API;
 use xenialdan\gameapi\Arena;
 use xenialdan\gameapi\Game;
@@ -91,210 +81,9 @@ class Loader extends Game
         return $arena;
     }
 
-    private static function getTeamNamesByAmount(int $amount): array
-    {
-        $teams = [
-            TextFormat::RED => "Red",
-            TextFormat::DARK_BLUE => "Blue",
-            TextFormat::GREEN => "Green",
-            TextFormat::YELLOW => "Yellow",
-            TextFormat::DARK_PURPLE => "Purple",
-            TextFormat::GOLD => "Orange",
-            TextFormat::LIGHT_PURPLE => "Pink",
-            TextFormat::DARK_AQUA => "Cyan",
-        ];
-        return array_slice($teams, 0, $amount, true);
-    }
-
     public function setupArena(Player $player): void
     {
-        $form = new SimpleForm("Bedwars arena setup");
-        $na = "New arena";
-        $form->addButton(new Button($na));
-        $ea = "Edit arena";
-        $form->addButton(new Button($ea));
-        $form->setCallable(function (Player $player, $data) use ($na, $ea) {
-            if ($data === $na) {
-                $form = new SimpleForm("Bedwars arena setup", "New arena via");
-                $nw = "New world";
-                $form->addButton(new Button($nw));
-                $ew = "Existing world";
-                $form->addButton(new Button($ew));
-                $form->setCallable(function (Player $player, $data) use ($ew, $nw) {
-                    $new = true;
-                    if ($data === $ew) {
-                        $new = false;
-                        $form = new SimpleForm("Bedwars arena setup", "New arena from $data");
-                        foreach (API::getAllWorlds() as $worldName) {
-                            $form->addButton(new Button($worldName));
-                        }
-                    } else {
-                        $form = new CustomForm("Bedwars arena setup");
-                        $form->addElement(new Label("New arena from $data"));
-                        $form->addElement(new Input("World name", "Example: bw4x1"));
-                    }
-                    $form->setCallable(function (Player $player, $data) use ($new) {
-                        $setup["name"] = $new ? $data[1] : $data;
-                        if ($new) {
-                            API::$generator->generateLevel($setup["name"]);
-                        }
-                        Server::getInstance()->loadLevel($setup["name"]);
-                        $form = new CustomForm("Bedwars teams setup");
-                        $form->addElement(new StepSlider("Teams", array_keys(array_fill(2, 7, ""))));
-                        $form->addElement(new StepSlider("Maximum players per team", array_keys(array_fill(1, 5, ""))));
-                        $form->setCallable(function (Player $player, $data) use ($new, $setup) {
-                            $setup["teamcount"] = intval($data[0]);
-                            $setup["maxplayers"] = intval($data[1]);
-                            $teams = self::getTeamNamesByAmount($setup["teamcount"]);
-                            //New arena
-                            $settings = new BedwarsSettings($this->getDataFolder() . $setup["name"] . ".json");
-                            foreach ($teams as $color => $name) {
-                                $settings->teams[$name] = ["color" => $color, "maxplayers" => $setup["maxplayers"]];
-                            }
-                            $settings->save();
-                            $this->addArena($this->getNewArena($this->getDataFolder() . $setup["name"] . ".json"));
-                            //Messages
-                            $player->sendMessage(TextFormat::GOLD . TextFormat::BOLD . "Done! Bedwars arena was set up with following settings:");
-                            $player->sendMessage(TextFormat::AQUA . "World name: " . TextFormat::DARK_AQUA . $setup["name"]);
-                            $message = TextFormat::AQUA . "Teams: " . TextFormat::LIGHT_PURPLE . $setup["teamcount"];
-                            $message .= TextFormat::RESET . "(";
-                            $tc = [];
-                            foreach ($teams as $color => $name) $tc[] = $color . ucfirst($name);
-                            $message .= implode(TextFormat::RESET . ", ", $tc);
-                            $message .= TextFormat::RESET . ")";
-                            $player->sendMessage($message);
-                            $player->sendMessage(TextFormat::AQUA . "Maximum players per team: " . TextFormat::DARK_AQUA . $setup["maxplayers"]);
-                            $player->sendMessage(TextFormat::GOLD . "Use \"/bw setup\" to set the team and item spawn points");
-                        });
-                        $player->sendForm($form);
-                    });
-                    $player->sendForm($form);
-                });
-                $player->sendForm($form);
-            } elseif ($data === $ea) {
-                $form = new SimpleForm("Edit Bedwars arena");
-                $build = "Build / Edit item spawners";
-                $button = new Button($build);
-                $button->addImage(Button::IMAGE_TYPE_PATH, "textures/ui/icon_recipe_construction");
-                $form->addButton($button);
-                $editspawnpoints = "Edit team spawn points";
-                $button = new Button($editspawnpoints);
-                $button->addImage(Button::IMAGE_TYPE_PATH, "textures/items/bed_red");
-                $form->addButton($button);
-                $addvillager = "Add Villager (Shop)";
-                $button = new Button($addvillager);
-                $button->addImage(Button::IMAGE_TYPE_PATH, "textures/items/emerald");
-                $form->addButton($button);
-                $delete = "Delete arena";
-                $button = new Button($delete);
-                $button->addImage(Button::IMAGE_TYPE_PATH, "textures/ui/trash");
-                $form->addButton($button);
-                $form->setCallable(function (Player $player, $data) use ($addvillager, $editspawnpoints, $delete, $build) {
-                    switch ($data) {
-                        case $build:
-                            {
-                                $form = new SimpleForm($build, "Select the arena you'd like to build in");
-                                foreach ($this->getArenas() as $arena) $form->addButton(new Button($arena->getLevelName()));
-                                $form->setCallable(function (Player $player, $data) {
-                                    $worldname = $data;
-                                    $arena = API::getArenaByLevelName($this, $worldname);
-                                    $this->getServer()->broadcastMessage("Stopping arena, reason: Admin actions", $arena->getPlayers());
-                                    $arena->stopArena();
-                                    $arena->setState(Arena::SETUP);
-                                    if (!$this->getServer()->isLevelLoaded($worldname)) $this->getServer()->loadLevel($worldname);
-                                    $player->teleport($arena->getLevel()->getSpawnLocation());
-                                    $player->setGamemode(Player::CREATIVE);
-                                    $player->setAllowFlight(true);
-                                    $player->setFlying(true);
-                                    $player->getInventory()->clearAll();
-                                    $arena->getLevel()->stopTime();
-                                    $arena->getLevel()->setTime(Level::TIME_DAY);
-                                    $player->sendMessage(TextFormat::GOLD . "You may now freely edit the arena.");
-                                    $player->sendMessage(TextFormat::GOLD . "Tap or right click gold blocks, iron blocks or uncolored terracotta blocks to activate the blocks as item droppers for gold, silver and bronze. Break the blocks to remove them");
-                                });
-                                $player->sendForm($form);
-                                break;
-                            }
-                        case $editspawnpoints:
-                            {
-                                $form = new SimpleForm($editspawnpoints, "Select the arena you'd like to edit the spawn points of");
-                                foreach ($this->getArenas() as $arena) $form->addButton(new Button($arena->getLevelName()));
-                                $form->setCallable(function (Player $player, $data) {
-                                    $worldname = $data;
-                                    $arena = API::getArenaByLevelName($this, $worldname);
-                                    $this->getServer()->broadcastMessage("Stopping arena, reason: Admin actions", $arena->getPlayers());
-                                    $arena->stopArena();
-                                    $arena->setState(Arena::SETUP);
-                                    if (!$this->getServer()->isLevelLoaded($worldname)) $this->getServer()->loadLevel($worldname);
-                                    $player->teleport($arena->getLevel()->getSpawnLocation());
-                                    $player->setGamemode(Player::SURVIVAL);
-                                    $player->setAllowFlight(true);
-                                    $player->setFlying(true);
-                                    $player->getInventory()->clearAll();
-                                    $arena->getLevel()->stopTime();
-                                    $arena->getLevel()->setTime(Level::TIME_DAY);
-                                    foreach ($arena->getTeams() as $team) {
-                                        $item = ItemFactory::get(Item::CONCRETE, API::getMetaByColor($team->getColor()));
-                                        $item->setLore(["Spawn point for the " . $team->getColor() . $team->getName() . TextFormat::RESET . " team", "Place to set the spawn point for this team"]);
-                                        $item->setCustomName($team->getColor() . $team->getName());
-                                        $player->getInventory()->addItem($item);
-                                    }
-                                    $player->sendMessage(TextFormat::GOLD . "Place the concrete blocks to set the team spawn points");
-                                });
-                                $player->sendForm($form);
-                                break;
-                            }
-                        case $addvillager:
-                            {
-                                $form = new SimpleForm($editspawnpoints, "Select the arena you'd like to add a villager shop in");
-                                foreach ($this->getArenas() as $arena) $form->addButton(new Button($arena->getLevelName()));
-                                $form->setCallable(function (Player $player, $data) {
-                                    $worldname = $data;
-                                    $arena = API::getArenaByLevelName($this, $worldname);
-                                    $this->getServer()->broadcastMessage("Stopping arena, reason: Admin actions", $arena->getPlayers());
-                                    $arena->stopArena();
-                                    $arena->setState(Arena::SETUP);
-                                    if (!$this->getServer()->isLevelLoaded($worldname)) $this->getServer()->loadLevel($worldname);
-                                    $player->teleport($arena->getLevel()->getSpawnLocation());
-                                    $player->setGamemode(Player::SURVIVAL);
-                                    $player->setAllowFlight(true);
-                                    $player->setFlying(true);
-                                    $player->getInventory()->clearAll();
-                                    $arena->getLevel()->stopTime();
-                                    $arena->getLevel()->setTime(Level::TIME_DAY);
-                                    $item = ItemFactory::get(Item::SPAWN_EGG, Entity::VILLAGER, 64);
-                                    $item->setLore(["Use to spawn a villager shop", "Sneak and hit a villager to remove it", "Hit a villager to rotate him 45 degrees"]);
-                                    $item->setCustomName(TextFormat::GOLD . TextFormat::BOLD . "Shop");
-                                    $player->getInventory()->addItem($item);
-                                    $player->sendMessage(TextFormat::GOLD . "Use the spawn egg to add a villager. Sneak and hit a villager to remove it. Hit a villager to rotate him 45 degrees");
-                                });
-                                $player->sendForm($form);
-                                break;
-                            }
-                        case $delete:
-                            {
-                                $form = new SimpleForm("Delete Bedwars arena", "Select an arena to remove. The world will NOT be deleted");
-                                foreach ($this->getArenas() as $arena) $form->addButton(new Button($arena->getLevelName()));
-                                $form->setCallable(function (Player $player, $data) {
-                                    $worldname = $data;
-                                    $form = new ModalForm("Confirm delete", "Please confirm that you want to delete the arena \"$worldname\"", "Delete $worldname", "Abort");
-                                    $form->setCallable(function (Player $player, $data) use ($worldname) {
-                                        if ($data) {
-                                            $arena = API::getArenaByLevelName($this, $worldname);
-                                            $this->deleteArena($arena) ? $player->sendMessage(TextFormat::GREEN . "Successfully deleted the arena") : $player->sendMessage(TextFormat::RED . "Removed the arena, but config file could not be deleted!");
-                                        }
-                                    });
-                                    $player->sendForm($form);
-                                });
-                                $player->sendForm($form);
-                                break;
-                            }
-                    }
-                });
-                $player->sendForm($form);
-            }
-        });
-        $player->sendForm($form);
+        $this->getLogger()->info("This shouldn't be required in production.  Tsk Tsk");
     }
 
     /**

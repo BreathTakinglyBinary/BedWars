@@ -22,10 +22,6 @@ permissions:
         default: op
       bedwars.command.stop:
         default: op
-      bedwars.command.endsetup:
-        default: op
-      bedwars.command.setup:
-        default: op
       bedwars.command.info:
         default: true
       bedwars.command.status:

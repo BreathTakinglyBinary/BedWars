@@ -21,7 +21,7 @@ class BedwarsCommand extends PluginCommand
         $this->setAliases(["bedwars"]);
         $this->setPermission("bedwars.command");
         $this->setDescription("Bedwars commands for setup or leaving a game");
-        $this->setUsage("/bw | /bw setup | /bw endsetup | /bw leave | /bw forcestart | /bw stop | /bw status | /bw info | /bw help");
+        $this->setUsage("/bw | /bw leave | /bw forcestart | /bw stop | /bw status | /bw help");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args)
@@ -39,17 +39,6 @@ class BedwarsCommand extends PluginCommand
         try {
             $return = true;
             switch ($args[0] ?? "help") {
-                case "setup":
-                    {
-                        if (!$sender->hasPermission("bedwars.command.setup")) {
-                            $sender->sendMessage(TextFormat::RED . "You do not have permissions to run this command");
-                            return true;
-                        }
-                        /** @var Game $p */
-                        $p = $this->getPlugin();
-                        $p->setupArena($sender);
-                        break;
-                    }
                 case "join":
                     {
                         if (!$sender->hasPermission("bedwars.command.join")) {

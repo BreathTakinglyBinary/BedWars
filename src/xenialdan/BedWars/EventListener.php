@@ -25,8 +25,7 @@ use xenialdan\gameapi\Team;
  * @package xenialdan\XBedWars
  * Listens for all normal events
  */
-class EventListener implements Listener
-{
+class EventListener implements Listener{
 
     public function onDamage(EntityDamageByEntityEvent $event){
         $damager = $event->getDamager();
@@ -46,38 +45,40 @@ class EventListener implements Listener
         $damager->sendForm(new ShopMainMenu());
     }
 
-    public function onBlockBreakEvent(BlockBreakEvent $event)
-    {
+    public function onBlockBreakEvent(BlockBreakEvent $event){
         $level = ($entity = $event->getPlayer())->getLevel();
-        if (API::isPlaying($entity, Loader::getInstance())) {
+        if(API::isPlaying($entity, Loader::getInstance())){
             $block = $event->getBlock();
-            if ($block instanceof Bed) {
+            if($block instanceof Bed){
                 $bedTile = $level->getTile($block);
-                if ($bedTile instanceof \pocketmine\tile\Bed) {
+                if($bedTile instanceof \pocketmine\tile\Bed){
                     $event->setDrops([]);
                     $c = $bedTile->getColor();
                     /** @var BedwarsTeam $attackedTeam */
                     $attackedTeam = API::getTeamByColor(Loader::getInstance(), $event->getBlock()->getLevel(), API::getColorByMeta($c));
-                    if (is_null($attackedTeam)) {//no team but bed for color
+                    if(is_null($attackedTeam)){//no team but bed for color
                         Loader::getInstance()->getLogger()->notice("Tried to break a bed for a non existing team. You might want to fix your map. Bed: Color: " . API::getColorByMeta($c) . "" . $event->getBlock() . " " . $event->getBlock()->asVector3() . " " . $event->getBlock()->getLevel()->getName());
+
                         return;
                     }
                     $event->setCancelled();
-                    if ($attackedTeam->inTeam($entity)) {
+                    if($attackedTeam->inTeam($entity)){
                         $entity->sendTip(TextFormat::RED . "You can not break your own teams bed!");//TODO add a warning to the player?
+
                         return;
-                    } else {
-                        if ($attackedTeam->isBedDestroyed()) return;
+                    }else{
+                        if($attackedTeam->isBedDestroyed()) return;
                         $event->setCancelled(false);
                         $attackedTeam->setBedDestroyed();
                         $teamOfPlayer = API::getTeamOfPlayer($entity);//TODO test if still happens in setup
-                        if (is_null($teamOfPlayer)) {
+                        if(is_null($teamOfPlayer)){
                             Loader::getInstance()->getLogger()->debug("Team of player was found null.");
                             $event->setCancelled(false);
+
                             return;
                         }
                         Loader::getInstance()->getServer()->broadcastTitle(TextFormat::RED . "Your Teams bed was destroyed", TextFormat::RED . "by team " . $teamOfPlayer->getColor() . $teamOfPlayer->getName(), -1, -1, -1, $attackedTeam->getPlayers());
-                        foreach ($attackedTeam->getPlayers() as $attackedTeamPlayer) {
+                        foreach($attackedTeam->getPlayers() as $attackedTeamPlayer){
                             $attackedTeamPlayer->setSpawn($attackedTeamPlayer->getServer()->getDefaultLevel()->getSafeSpawn());
                         }
                         Loader::getInstance()->getServer()->broadcastTitle($attackedTeam->getColor() . "The bed of team " . $attackedTeam->getName(), $attackedTeam->getColor() . "was destroyed by team " . $teamOfPlayer->getColor() . $teamOfPlayer->getName(), -1, -1, -1, $attackedTeam->getPlayers());
@@ -94,30 +95,31 @@ class EventListener implements Listener
         }
     }
 
-    public function onBlockPlaceEvent(BlockPlaceEvent $event)
-    {
-        if (!API::isArenaOf(Loader::getInstance(), $event->getBlock()->getLevel())) return;
-        if (($arena = API::getArenaByLevel(Loader::getInstance(), $event->getBlock()->getLevel())) instanceof Arena) {
-            if (($arena->getState() === Arena::STARTING || $arena->getState() === Arena::WAITING) && $event->getItem()->getId() === ItemIds::BED) {
+    public function onBlockPlaceEvent(BlockPlaceEvent $event){
+        if(!API::isArenaOf(Loader::getInstance(), $event->getBlock()->getLevel())) return;
+        if(($arena = API::getArenaByLevel(Loader::getInstance(), $event->getBlock()->getLevel())) instanceof Arena){
+            if(($arena->getState() === Arena::STARTING || $arena->getState() === Arena::WAITING) && $event->getItem()->getId() === ItemIds::BED){
                 $event->setCancelled();
                 $player = $event->getPlayer();
                 /** @var Team $team */
                 if(count(($team = $arena->getTeamByPlayer($player))->getPlayers()) <= $team->getMinPlayers()){
-                    $player->sendMessage(TextFormat::RED.TextFormat::BOLD."Can not leave the team because a minimum of ".$team->getMinPlayers(). " players is required for this team");
+                    $player->sendMessage(TextFormat::RED . TextFormat::BOLD . "Can not leave the team because a minimum of " . $team->getMinPlayers() . " players is required for this team");
+
                     return;
                 }
                 $form = new SimpleForm("Switch Team");
-                foreach ($arena->getTeams() as $team) {
+                foreach($arena->getTeams() as $team){
                     $button = new Button($team->getColor() . $team->getName() . TextFormat::GOLD . " [" . count($team->getPlayers()) . "/" . $team->getMaxPlayers() . "]");
                     $button->addImage(Button::IMAGE_TYPE_PATH, "textures/items/bed_" . strtolower($team->getName()));
                     $form->addButton($button);
                 }
-                $form->setCallable(function (Player $player, $data) use ($arena, $form) {
+                $form->setCallable(function(Player $player, $data) use ($arena, $form){
                     $player->getInventory()->clearAll();
                     $data = TextFormat::clean(substr($data, 0, strpos($data, " ")));
                     $arena->joinTeam($player, $data);
                 });
                 $player->sendForm($form);
+
                 return;
             }
             /*if ($arena->getState() !== Arena::INGAME && $arena->getState() !== Arena::SETUP) {

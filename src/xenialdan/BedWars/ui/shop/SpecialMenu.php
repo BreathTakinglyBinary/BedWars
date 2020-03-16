@@ -45,7 +45,7 @@ class SpecialMenu extends SimpleForm{
             case "snowballs":
                 $value = 3;
                 $valueType = Loader::GOLD;
-                $item = ItemFactory::get(Item::SNOWBALL, 0 , 8);
+                $item = ItemFactory::get(Item::SNOWBALL, 0, 8);
                 break;
             case "ebow":
                 $value = 20;

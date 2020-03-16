@@ -5,23 +5,20 @@ namespace xenialdan\BedWars;
 
 use xenialdan\gameapi\Team;
 
-class BedwarsTeam extends Team
-{
+class BedwarsTeam extends Team{
     private $bedDestroyed = false;
 
     /**
      * @return bool
      */
-    public function isBedDestroyed(): bool
-    {
+    public function isBedDestroyed() : bool{
         return $this->bedDestroyed;
     }
 
     /**
      * @param bool $bedDestroyed
      */
-    public function setBedDestroyed(bool $bedDestroyed = true): void
-    {
+    public function setBedDestroyed(bool $bedDestroyed = true) : void{
         $this->bedDestroyed = $bedDestroyed;
     }
 

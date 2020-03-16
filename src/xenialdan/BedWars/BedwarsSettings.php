@@ -7,8 +7,7 @@ namespace xenialdan\BedWars;
 use pocketmine\block\BlockIds;
 use xenialdan\gameapi\DefaultSettings;
 
-class BedwarsSettings extends DefaultSettings
-{
+class BedwarsSettings extends DefaultSettings{
     public $noDamageTeam = true;
     public $noEnvironmentDamage = true;
     public $clearInventory = true;

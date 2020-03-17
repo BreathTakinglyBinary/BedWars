@@ -190,8 +190,6 @@ class Loader extends Game{
      */
     public function onPlayerJoinTeam(Player $player) : void{
         $player->setSpawn(Position::fromObject(API::getTeamOfPlayer($player)->getSpawn(), API::getArenaOfPlayer($player)->getLevel()));
-        //Team color switching
-        $player->getInventory()->addItem(Item::get(ItemIds::BED, API::getMetaByColor(API::getTeamOfPlayer($player)->getColor()))->setCustomName("Switch Team"));
     }
 
     /**

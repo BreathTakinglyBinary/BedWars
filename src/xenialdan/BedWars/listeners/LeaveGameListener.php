@@ -7,6 +7,8 @@ use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerDeathEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\Player;
+use xenialdan\BedWars\BedwarsTeam;
+use xenialdan\BedWars\Loader;
 use xenialdan\gameapi\API;
 
 /**

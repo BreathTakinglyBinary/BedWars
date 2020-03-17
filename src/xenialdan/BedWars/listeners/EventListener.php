@@ -11,6 +11,8 @@ use pocketmine\event\player\PlayerExhaustEvent;
 use pocketmine\item\ItemIds;
 use pocketmine\network\mcpe\protocol\PlaySoundPacket;
 use pocketmine\utils\TextFormat;
+use xenialdan\BedWars\BedwarsTeam;
+use xenialdan\BedWars\Loader;
 use xenialdan\gameapi\API;
 use xenialdan\gameapi\Arena;
 use xenialdan\gameapi\event\StopGameEvent;

@@ -7,6 +7,7 @@ use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\tile\Sign;
 use pocketmine\utils\TextFormat;
+use xenialdan\BedWars\Loader;
 
 /**
  * Class JoinListener

@@ -46,16 +46,25 @@ class Loader extends Game{
     }
 
     public function onEnable(){
-        $this->getServer()->getPluginManager()->registerEvents(new EventListener(), $this);
-        $this->getServer()->getPluginManager()->registerEvents(new JoinGameListener(), $this);
-        $this->getServer()->getPluginManager()->registerEvents(new LeaveGameListener(), $this);
-        $this->getServer()->getPluginManager()->registerEvents(new NPCListener(), $this);
+        $this->registerListeners();
         $this->getServer()->getCommandMap()->register("XBedWars", new BedwarsCommand($this));
         /** @noinspection PhpUnhandledExceptionInspection */
         API::registerGame($this);
         foreach(glob($this->getDataFolder() . "*.json") as $v){
             $this->getLogger()->info("Adding arena " . basename($v, ".json"));
             $this->addArena($this->getNewArena($v));
+        }
+    }
+
+    private function registerListeners() : void{
+        $listeners = [
+            new EventListener(),
+            new JoinGameListener(),
+            new LeaveGameListener(),
+            new NPCListener()
+        ];
+        foreach($listeners as $listener){
+            $this->getServer()->getPluginManager()->registerEvents($listener, $this);
         }
     }
 

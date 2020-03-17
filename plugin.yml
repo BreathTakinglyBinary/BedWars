@@ -8,6 +8,9 @@ load: POSTWORLD
 softdepend:
 - DEVirion
 - gamereward
+virions:
+  - gameapi
+  - libDynamicForms
 prefix: "[BedWars]"
 permissions:
   bedwars.command:

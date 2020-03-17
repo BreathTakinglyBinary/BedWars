@@ -46,7 +46,6 @@ class Loader extends Game{
         $this->getServer()->getPluginManager()->registerEvents(new EventListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new JoinGameListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new LeaveGameListener(), $this);
-        $this->getServer()->getPluginManager()->registerEvents(new SetupEventListener(), $this);
         $this->getServer()->getCommandMap()->register("XBedWars", new BedwarsCommand($this));
         /** @noinspection PhpUnhandledExceptionInspection */
         API::registerGame($this);
@@ -64,6 +63,13 @@ class Loader extends Game{
             $team = new BedwarsTeam($teaminfo["color"] ?? TextFormat::RESET, $teamname);
             $team->setMinPlayers(1);
             $team->setMaxPlayers($teaminfo["maxplayers"] ?? 1);
+
+            if(!isset($teaminfo["bedlocation"]["x"]) or !isset($teaminfo["bedlocation"]["y"]) or !isset($teaminfo["bedlocation"]["z"])){
+                $this->getLogger()->error("Invalid bedlocation found for $teamname in Arena " . $arena->getLevelName() . ".");
+            }else{
+                $team->setBedLocation(new Vector3($teaminfo["bedlocation"]["x"], $teaminfo["bedlocation"]["y"], $teaminfo["bedlocation"]["z"]));
+            }
+
             #if (!is_null($teaminfo["spawn"]))
             $team->setSpawn(new Vector3(
                     $teaminfo["spawn"]["x"] ?? $arena->getLevel()->getSpawnLocation()->getFloorX(),
@@ -121,14 +127,6 @@ class Loader extends Game{
         /** @var BedwarsSettings $settings */
         $settings = $arena->getSettings();
         foreach($settings->bronze ?? [] as $i => $spawn){
-            if($arena->getLevel()->getBlockIdAt($spawn["x"], $spawn["y"], $spawn["z"]) !== BlockIds::HARDENED_CLAY){
-                $s = $settings->bronze;
-                unset($s[$i]);
-                $settings->bronze = $s;
-                $settings->save();
-                $this->getLogger()->debug("Removed bronze item spawner at [" . (join(", ", $spawn) . "] due to no bronze block existing at this position"));
-                continue;
-            }
             $v = new Vector3($spawn["x"] + 0.5, $spawn["y"] + 1, $spawn["z"] + 0.5);
             if(!$arena->getLevel()->isChunkLoaded($v->x >> 4, $v->z >> 4)) $arena->getLevel()->loadChunk($v->x >> 4, $v->z >> 4);
             //Stack items if too many
@@ -163,15 +161,6 @@ class Loader extends Game{
         /** @var BedwarsSettings $settings */
         $settings = $arena->getSettings();
         foreach($settings->silver ?? [] as $i => $spawn){
-            if($arena->getLevel()->getBlockIdAt($spawn["x"], $spawn["y"], $spawn["z"]) !== BlockIds::IRON_BLOCK){
-                $s = $settings->silver;
-                unset($s[$i]);
-                $settings->set("silver", $s);
-                $settings->save();
-                $settings->reload();
-                $this->getLogger()->debug("Removed silver item spawner at [" . (join(", ", $spawn) . "] due to no iron block existing at this position"));
-                continue;
-            }
             $v = new Vector3($spawn["x"] + 0.5, $spawn["y"] + 1, $spawn["z"] + 0.5);
             if(!$arena->getLevel()->isChunkLoaded($v->x >> 4, $v->z >> 4)) $arena->getLevel()->loadChunk($v->x >> 4, $v->z >> 4);
             $arena->getLevel()->dropItem($v, (new Item(ItemIds::IRON_INGOT))->setCustomName(TextFormat::GRAY . "Silver"));
@@ -183,14 +172,6 @@ class Loader extends Game{
         /** @var BedwarsSettings $settings */
         $settings = $arena->getSettings();
         foreach($settings->gold ?? [] as $i => $spawn){
-            if($arena->getLevel()->getBlockIdAt($spawn["x"], $spawn["y"], $spawn["z"]) !== BlockIds::GOLD_BLOCK){
-                $s = $settings->gold;
-                unset($s[$i]);
-                $settings->gold = $s;
-                $settings->save();
-                $this->getLogger()->debug("Removed gold item spawner at [" . (join(", ", $spawn) . "] due to no gold block existing at this position"));
-                continue;
-            }
             $v = new Vector3($spawn["x"] + 0.5, $spawn["y"] + 1, $spawn["z"] + 0.5);
             if(!$arena->getLevel()->isChunkLoaded($v->x >> 4, $v->z >> 4)) $arena->getLevel()->loadChunk($v->x >> 4, $v->z >> 4);
             $arena->getLevel()->dropItem($v, (new Item(ItemIds::GOLD_INGOT))->setCustomName(TextFormat::YELLOW . "Gold"));

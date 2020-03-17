@@ -152,7 +152,7 @@ class Loader extends Game{
                 }
             }
 
-            $arena->getLevel()->dropItem($v, (new Item(ItemIds::BRICK))->setCount(2)->setCustomName(TextFormat::GOLD . "Bronze"));
+            $arena->getLevel()->dropItem($v, (new Item(ItemIds::BRICK))->setCount(1)->setCustomName(TextFormat::GOLD . "Bronze"));
             $arena->getLevel()->broadcastLevelSoundEvent($v, LevelSoundEventPacket::SOUND_DROP_SLOT);
         }
     }

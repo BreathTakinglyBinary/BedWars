@@ -18,6 +18,7 @@ class WeaponsMenu extends SimpleForm{
 
     public function __construct(?Form $previousForm = null){
         parent::__construct(TextFormat::DARK_GREEN . "Weapons", $previousForm);
+        $this->addButton(TextFormat::DARK_BLUE . "Stone Sword \n" . TextFormat::DARK_RED . "5 Bronze", "stone");
         $this->addButton(TextFormat::DARK_BLUE . "Iron Sword \n" . TextFormat::DARK_BLUE . "5 Iron", "iron");
         $this->addButton(TextFormat::DARK_BLUE . "Diamond Sword \n" . TextFormat::GOLD . "10 Gold", "diamond");
         $this->addButton(TextFormat::DARK_BLUE . "Bow\n" . TextFormat::DARK_BLUE . "2 Silver", "bow");
@@ -35,6 +36,11 @@ class WeaponsMenu extends SimpleForm{
             return;
         }
         switch($data){
+            case "stone":
+                $value = 5;
+                $valueType = Loader::BRONZE;
+                $item = ItemFactory::get(Item::STONE_SWORD);
+                break;
             case "iron":
                 $value = 5;
                 $valueType = Loader::SILVER;

@@ -46,8 +46,10 @@ class ShopMainMenu extends SimpleForm{
                 $form = new ArmorMenu($this);
                 break;
             case "tools":
+                $form = new ToolsMenu($this);
                 break;
             case "special":
+                $form = new SpecialMenu($this);
                 break;
             default:
                 return;

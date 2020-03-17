@@ -66,12 +66,7 @@ class SpecialMenu extends SimpleForm{
         }
         if(!Loader::buyItem($item, $player, $valueType, $value)){
             $this->setContent(TextFormat::RED . "Not Enough " . $valueType . "!");
-            $player->sendForm($this);
-        }else{
-            $form = $this->getPreviousForm();
-            if($form instanceof Form){
-                $player->sendForm($this->getPreviousForm());
-            }
         }
+        $player->sendForm($this);
     }
 }

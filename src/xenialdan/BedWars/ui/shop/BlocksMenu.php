@@ -58,12 +58,7 @@ class BlocksMenu extends SimpleForm{
         }
         if(!Loader::buyItem($item, $player, Loader::BRONZE, $value)){
             $this->setContent(TextFormat::RED . "Not Enough " . Loader::BRONZE . "!");
-            $player->sendForm($this);
-        }else{
-            $form = $this->getPreviousForm();
-            if($form instanceof Form){
-                $player->sendForm($this->getPreviousForm());
-            }
         }
+        $player->sendForm($this);
     }
 }

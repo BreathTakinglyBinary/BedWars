@@ -64,7 +64,7 @@ class ToolsMenu extends SimpleForm{
         }else{
             $form = $this->getPreviousForm();
             if($form instanceof Form){
-                $player->sendForm($this->getPreviousForm());
+                $player->sendForm($form);
             }
         }
     }

@@ -8,6 +8,7 @@ use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerExhaustEvent;
 use pocketmine\item\ItemIds;
 use pocketmine\network\mcpe\protocol\PlaySoundPacket;
 use pocketmine\Player;
@@ -137,6 +138,10 @@ class EventListener implements Listener{
         /*if ($arena->getState() !== Arena::INGAME && $arena->getState() !== Arena::SETUP) {
             $event->setCancelled();
         }*/
+    }
+
+    public function onExhaust(PlayerExhaustEvent $event){
+        $event->setCancelled();
     }
 
     public function onGameEnd(StopGameEvent $event){

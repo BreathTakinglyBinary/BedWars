@@ -19,8 +19,8 @@ class BlocksMenu extends SimpleForm{
 
     public function __construct(?Form $previousForm = null){
         parent::__construct(TextFormat::DARK_GREEN . "Blocks", $previousForm);
-        $this->addButton(TextFormat::DARK_BLUE . "15x Wool \n" . TextFormat::DARK_RED . "5 Bronze", "wool");
-        $this->addButton(TextFormat::DARK_BLUE . "15x Wood \n" . TextFormat::DARK_RED . "10 Bronze", "wood");
+        $this->addButton(TextFormat::DARK_BLUE . "16x Wool \n" . TextFormat::DARK_RED . "5 Bronze", "wool");
+        $this->addButton(TextFormat::DARK_BLUE . "16x Wood \n" . TextFormat::DARK_RED . "10 Bronze", "wood");
         $this->addButton(TextFormat::DARK_BLUE . "10x Diorite\n" . TextFormat::DARK_RED . "20 Bronze", "diorite");
         $this->addButton(TextFormat::DARK_BLUE . "5x Obsidian\n" . TextFormat::DARK_RED . "35 Bronze", "obsidian");
     }
@@ -39,11 +39,11 @@ class BlocksMenu extends SimpleForm{
             case "wool":
                 $value = 5;
                 $meta = API::getMetaByColor($arena->getTeamByPlayer($player)->getColor());
-                $item = ItemFactory::get(Item::WOOL, $meta, 15);
+                $item = ItemFactory::get(Item::WOOL, $meta, 16);
                 break;
             case "wood":
                 $value = 10;
-                $item = ItemFactory::get(Item::PLANKS, 0, 15);
+                $item = ItemFactory::get(Item::PLANKS, 0, 16);
                 break;
             case "diorite":
                 $value = 20;

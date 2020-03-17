@@ -3,7 +3,6 @@
 namespace xenialdan\BedWars;
 
 use pocketmine\block\Bed;
-use pocketmine\entity\Villager;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
@@ -11,9 +10,7 @@ use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerExhaustEvent;
 use pocketmine\item\ItemIds;
 use pocketmine\network\mcpe\protocol\PlaySoundPacket;
-use pocketmine\Player;
 use pocketmine\utils\TextFormat;
-use xenialdan\BedWars\ui\shop\ShopMainMenu;
 use xenialdan\gameapi\API;
 use xenialdan\gameapi\Arena;
 use xenialdan\gameapi\event\StopGameEvent;
@@ -28,21 +25,7 @@ class EventListener implements Listener{
     private $blocksPlaced = [];
 
     public function onDamage(EntityDamageByEntityEvent $event){
-        $damager = $event->getDamager();
-        if(!$damager instanceof Player){
-            return;
-        }
 
-        if(!$event->getEntity() instanceof Villager){
-            return;
-        }
-
-        $arena = API::getArenaOfPlayer($damager);
-        if(!$arena instanceof Arena or !API::isArenaOf(Loader::getInstance(), $arena->getLevel()) or $arena->getState() !== Arena::INGAME){
-            return;
-        }
-        $event->setCancelled();
-        $damager->sendForm(new ShopMainMenu());
     }
 
     /**

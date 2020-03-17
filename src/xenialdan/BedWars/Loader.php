@@ -2,7 +2,6 @@
 
 namespace xenialdan\BedWars;
 
-use pocketmine\block\BlockIds;
 use pocketmine\entity\Entity;
 use pocketmine\entity\object\ItemEntity;
 use pocketmine\entity\object\PrimedTNT;
@@ -16,6 +15,7 @@ use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
 use xenialdan\BedWars\commands\BedwarsCommand;
+use xenialdan\BedWars\listeners\NPCListener;
 use xenialdan\BedWars\task\SpawnItemsTask;
 use xenialdan\gameapi\API;
 use xenialdan\gameapi\Arena;
@@ -46,6 +46,7 @@ class Loader extends Game{
         $this->getServer()->getPluginManager()->registerEvents(new EventListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new JoinGameListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new LeaveGameListener(), $this);
+        $this->getServer()->getPluginManager()->registerEvents(new NPCListener(), $this);
         $this->getServer()->getCommandMap()->register("XBedWars", new BedwarsCommand($this));
         /** @noinspection PhpUnhandledExceptionInspection */
         API::registerGame($this);

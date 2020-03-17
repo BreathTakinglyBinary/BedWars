@@ -38,22 +38,22 @@ class ToolsMenu extends SimpleForm{
             case "stonepick":
                 $value = 5;
                 $valueType = Loader::BRONZE;
-                $item = ItemFactory::get(Item::IRON_SWORD);
+                $item = ItemFactory::get(Item::STONE_PICKAXE);
                 break;
             case "ironpick":
                 $value = 5;
                 $valueType = Loader::SILVER;
-                $item = ItemFactory::get(Item::DIAMOND_SWORD);
+                $item = ItemFactory::get(Item::IRON_PICKAXE);
                 break;
             case "stoneaxe":
                 $value = 5;
                 $valueType = Loader::BRONZE;
-                $item = ItemFactory::get(Item::BOW);
+                $item = ItemFactory::get(Item::STONE_AXE);
                 break;
             case "ironaxe":
                 $value = 5;
                 $valueType = Loader::SILVER;
-                $item = ItemFactory::get(Item::ARROW, 0, 16);
+                $item = ItemFactory::get(Item::IRON_AXE, 0, 16);
                 break;
             default:
                 return;

@@ -1,6 +1,6 @@
 <?php
 
-namespace xenialdan\BedWars;
+namespace xenialdan\BedWars\listeners;
 
 use pocketmine\block\SignPost;
 use pocketmine\event\Listener;

@@ -1,6 +1,6 @@
 <?php
 
-namespace xenialdan\BedWars;
+namespace xenialdan\BedWars\listeners;
 
 use pocketmine\event\entity\EntityLevelChangeEvent;
 use pocketmine\event\Listener;

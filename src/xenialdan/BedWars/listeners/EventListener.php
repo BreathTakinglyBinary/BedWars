@@ -1,6 +1,6 @@
 <?php /** @noinspection PhpUnhandledExceptionInspection */
 
-namespace xenialdan\BedWars;
+namespace xenialdan\BedWars\listeners;
 
 use pocketmine\block\Bed;
 use pocketmine\event\block\BlockBreakEvent;

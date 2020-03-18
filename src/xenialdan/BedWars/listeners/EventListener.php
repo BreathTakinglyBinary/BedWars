@@ -53,19 +53,20 @@ class EventListener implements Listener{
         if(!$team instanceof BedwarsTeam){
             return;
         }
-        if($team->isBedDestroyed()){
-            $player->getInventory()->clearAll();
-            $player->getArmorInventory()->clearAll();
-            //TODO: Add spectating
-            return;
-        }
         $event->setCancelled();
         (new PlayerDeathEvent($player, []))->call();
         $player->getInventory()->dropContents($arena->getLevel(), $player);
         $player->removeAllEffects();
         $player->removeAllWindows();
         $player->setHealth($player->getMaxHealth());
-        $player->teleport($team->getSpawn());
+        $spawn = $team->getSpawn();
+        if($team->isBedDestroyed()){
+            $player->getArmorInventory()->clearAll();
+            $player->setGamemode(Player::SPECTATOR);
+            //TODO: Add spectating
+            $spawn = $arena->getLevel()->getSpawnLocation();
+        }
+        $player->teleport($spawn);
     }
 
     /**

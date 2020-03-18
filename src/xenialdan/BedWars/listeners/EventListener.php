@@ -2,20 +2,22 @@
 
 namespace xenialdan\BedWars\listeners;
 
-use pocketmine\block\Bed;
-use pocketmine\event\block\BlockBreakEvent;
-use pocketmine\event\block\BlockPlaceEvent;
-use pocketmine\event\entity\EntityDamageByEntityEvent;
-use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerExhaustEvent;
-use pocketmine\item\ItemIds;
-use pocketmine\network\mcpe\protocol\PlaySoundPacket;
-use pocketmine\utils\TextFormat;
-use xenialdan\BedWars\BedwarsTeam;
-use xenialdan\BedWars\Loader;
 use BreathTakinglyBinary\minigames\API;
 use BreathTakinglyBinary\minigames\Arena;
 use BreathTakinglyBinary\minigames\event\StopGameEvent;
+use pocketmine\block\Bed;
+use pocketmine\event\block\BlockBreakEvent;
+use pocketmine\event\block\BlockPlaceEvent;
+use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerDeathEvent;
+use pocketmine\event\player\PlayerExhaustEvent;
+use pocketmine\item\ItemIds;
+use pocketmine\network\mcpe\protocol\PlaySoundPacket;
+use pocketmine\Player;
+use pocketmine\utils\TextFormat;
+use xenialdan\BedWars\BedwarsTeam;
+use xenialdan\BedWars\Loader;
 
 /**
  * Class EventListener
@@ -26,8 +28,34 @@ class EventListener implements Listener{
 
     private $blocksPlaced = [];
 
-    public function onDamage(EntityDamageByEntityEvent $event){
+    public function onDamage(EntityDamageEvent $event){
+        $player = $event->getEntity();
+        if(!$player instanceof Player){
+            return;
+        }
+        $arena = API::getArenaByLevel(Loader::getInstance(), $player->getLevel());
+        if(!$arena instanceof Arena or $arena->getState() !== Arena::INGAME){
+            return;
+        }
 
+        $team = $arena->getTeamByPlayer($player);
+        if(!$team instanceof BedwarsTeam){
+            return;
+        }
+
+        if($team->isBedDestroyed()){
+            $player->getInventory()->clearAll();
+            $player->getArmorInventory()->clearAll();
+            //TODO: Add spectating
+            return;
+        }
+        $event->setCancelled();
+        (new PlayerDeathEvent($player, []))->call();
+        $player->getInventory()->clearAll();
+        $player->removeAllEffects();
+        $player->removeAllWindows();
+        $player->setHealth($player->getMaxHealth());
+        $player->teleport($team->getSpawn());
     }
 
     /**

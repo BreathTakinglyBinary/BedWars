@@ -12,6 +12,7 @@ use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerDeathEvent;
 use pocketmine\event\player\PlayerExhaustEvent;
+use pocketmine\event\player\PlayerItemHeldEvent;
 use pocketmine\item\ItemIds;
 use pocketmine\network\mcpe\protocol\PlaySoundPacket;
 use pocketmine\Player;
@@ -55,7 +56,7 @@ class EventListener implements Listener{
         }
         $event->setCancelled();
         (new PlayerDeathEvent($player, []))->call();
-        $player->getInventory()->clearAll();
+        $player->getInventory()->dropContents($arena->getLevel(), $player);
         $player->removeAllEffects();
         $player->removeAllWindows();
         $player->setHealth($player->getMaxHealth());
@@ -163,5 +164,9 @@ class EventListener implements Listener{
 
     public function onGameEnd(StopGameEvent $event){
         $this->blocksPlaced = [];
+    }
+
+    public function onHold(PlayerItemHeldEvent $event){
+        $event->getPlayer()->sendPopup(TextFormat::GOLD . "ITEM: " . $event->getItem()->getId() . ":" . $event->getItem()->getDamage());
     }
 }

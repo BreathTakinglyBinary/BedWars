@@ -8,8 +8,6 @@ projects:
     libs:
     - src: BreathTakinglyBinary/libDynamicForms/libDynamicForms
       version: ^1.1.0
-    - src: thebigsmilexd/gameapi/gameapi
+    - src: BreathTakinglyBinary/libDynamicMiniGames
       version: ^4.0.4
-    - src: muqsit/invmenu/InvMenu
-      version: ^2.0.0
 ...

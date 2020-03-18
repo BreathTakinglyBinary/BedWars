@@ -20,10 +20,10 @@ use xenialdan\BedWars\listeners\JoinGameListener;
 use xenialdan\BedWars\listeners\LeaveGameListener;
 use xenialdan\BedWars\listeners\NPCListener;
 use xenialdan\BedWars\task\SpawnItemsTask;
-use xenialdan\gameapi\API;
-use xenialdan\gameapi\Arena;
-use xenialdan\gameapi\Game;
-use xenialdan\gameapi\Team;
+use BreathTakinglyBinary\minigames\API;
+use BreathTakinglyBinary\minigames\Arena;
+use BreathTakinglyBinary\minigames\Game;
+use BreathTakinglyBinary\minigames\Team;
 
 class Loader extends Game{
     const BRONZE = "Bronze";

@@ -9,7 +9,7 @@ use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\Player;
 use xenialdan\BedWars\BedwarsTeam;
 use xenialdan\BedWars\Loader;
-use xenialdan\gameapi\API;
+use BreathTakinglyBinary\minigames\API;
 
 /**
  * Class LeaveGameListener
@@ -36,10 +36,11 @@ class LeaveGameListener implements Listener{
     }
 
     public function onLevelChange(EntityLevelChangeEvent $ev){
-        if($ev->getEntity() instanceof Player){
-            if(API::isArenaOf(Loader::getInstance(), $ev->getOrigin()) && API::isPlaying($ev->getEntity(), Loader::getInstance()))//TODO test if still calls it twice
+        $entity = $ev->getEntity();
+        if($entity instanceof Player){
+            if(API::isArenaOf(Loader::getInstance(), $ev->getOrigin()) && API::isPlaying($entity, Loader::getInstance()))//TODO test if still calls it twice
                 /** @noinspection PhpUnhandledExceptionInspection */
-                API::getArenaByLevel(Loader::getInstance(), $ev->getOrigin())->removePlayer($ev->getEntity());
+                API::getArenaByLevel(Loader::getInstance(), $ev->getOrigin())->removePlayer($entity);
         }
     }
 }

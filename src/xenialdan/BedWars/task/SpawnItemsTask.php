@@ -6,7 +6,7 @@ namespace xenialdan\BedWars\task;
 
 use pocketmine\scheduler\Task;
 use xenialdan\BedWars\Loader;
-use xenialdan\gameapi\Arena;
+use BreathTakinglyBinary\minigames\Arena;
 
 class SpawnItemsTask extends Task{
     private $arena;

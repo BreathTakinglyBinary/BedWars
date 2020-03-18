@@ -9,8 +9,8 @@ softdepend:
 - DEVirion
 - gamereward
 virions:
-  - gameapi
-  - libDynamicForms
+  - libDynamicFormsstop
+  - libDynamicMiniGames
 prefix: "[BedWars]"
 permissions:
   bedwars.command:

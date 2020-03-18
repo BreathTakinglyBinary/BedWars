@@ -5,7 +5,7 @@ namespace xenialdan\BedWars;
 
 
 use pocketmine\block\BlockIds;
-use xenialdan\gameapi\DefaultSettings;
+use BreathTakinglyBinary\minigames\DefaultSettings;
 
 class BedwarsSettings extends DefaultSettings{
     public $noDamageTeam = true;

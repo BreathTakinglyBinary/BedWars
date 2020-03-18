@@ -3,7 +3,8 @@
 
 namespace xenialdan\BedWars;
 
-use xenialdan\gameapi\Team;
+use pocketmine\math\Vector3;
+use BreathTakinglyBinary\minigames\Team;
 
 class BedwarsTeam extends Team{
     private $bedDestroyed = false;

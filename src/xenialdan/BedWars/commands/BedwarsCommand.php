@@ -10,8 +10,8 @@ use pocketmine\Player;
 use pocketmine\plugin\Plugin;
 use pocketmine\utils\TextFormat;
 use xenialdan\BedWars\Loader;
-use xenialdan\gameapi\API;
-use xenialdan\gameapi\Game;
+use BreathTakinglyBinary\minigames\API;
+use BreathTakinglyBinary\minigames\Game;
 
 class BedwarsCommand extends PluginCommand{
     public function __construct(Plugin $plugin){

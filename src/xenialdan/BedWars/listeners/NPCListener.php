@@ -8,8 +8,10 @@ use pocketmine\entity\Villager;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\Listener;
 use pocketmine\Player;
-use xenialdan\gameapi\API;
-use xenialdan\gameapi\Arena;
+use BreathTakinglyBinary\minigames\API;
+use BreathTakinglyBinary\minigames\Arena;
+use xenialdan\BedWars\Loader;
+use xenialdan\BedWars\ui\shop\ShopMainMenu;
 
 class NPCListener implements Listener{
 

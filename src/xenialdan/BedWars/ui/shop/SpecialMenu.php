@@ -13,8 +13,8 @@ use pocketmine\item\ItemFactory;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
 use xenialdan\BedWars\Loader;
-use xenialdan\gameapi\API;
-use xenialdan\gameapi\Arena;
+use BreathTakinglyBinary\minigames\API;
+use BreathTakinglyBinary\minigames\Arena;
 
 class SpecialMenu extends SimpleForm{
 

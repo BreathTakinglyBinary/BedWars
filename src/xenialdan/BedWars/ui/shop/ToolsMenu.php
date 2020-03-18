@@ -18,10 +18,10 @@ class ToolsMenu extends SimpleForm{
 
     public function __construct(?Form $previousForm = null){
         parent::__construct(TextFormat::DARK_GREEN . "Tools", $previousForm);
-        $this->addButton(TextFormat::DARK_BLUE . "Stone Pickaxe \n" . TextFormat::DARK_RED . "5 Bronze", "stonepick");
-        $this->addButton(TextFormat::DARK_BLUE . "Iron Pickaxe \n" . TextFormat::DARK_BLUE . "5 Silver", "ironpick");
-        $this->addButton(TextFormat::DARK_BLUE . "Stone Axe\n" . TextFormat::DARK_RED . "5 bronze", "stoneaxe");
-        $this->addButton(TextFormat::DARK_BLUE . "Iron Axe\n" . TextFormat::DARK_BLUE . "5 silver", "ironaxe");
+        $this->addButton(TextFormat::DARK_BLUE . "Iron Pickaxe \n" . TextFormat::DARK_RED . "10 Bronze", "ironpick");
+        $this->addButton(TextFormat::DARK_BLUE . "Diamond Pickaxe \n" . TextFormat::DARK_BLUE . "5 Gold", "diamondpick");
+        $this->addButton(TextFormat::DARK_BLUE . "Iron Axe\n" . TextFormat::DARK_RED . "10 Bronze", "ironaxe");
+        $this->addButton(TextFormat::DARK_BLUE . "Diamond Axe\n" . TextFormat::DARK_BLUE . "5 Gold", "diamondaxe");
     }
 
     /**
@@ -35,25 +35,25 @@ class ToolsMenu extends SimpleForm{
             return;
         }
         switch($data){
-            case "stonepick":
-                $value = 5;
-                $valueType = Loader::BRONZE;
-                $item = ItemFactory::get(Item::STONE_PICKAXE);
-                break;
             case "ironpick":
-                $value = 5;
-                $valueType = Loader::SILVER;
+                $value = 10;
+                $valueType = Loader::BRONZE;
                 $item = ItemFactory::get(Item::IRON_PICKAXE);
                 break;
-            case "stoneaxe":
+            case "diamondpick":
                 $value = 5;
-                $valueType = Loader::BRONZE;
-                $item = ItemFactory::get(Item::STONE_AXE);
+                $valueType = Loader::GOLD;
+                $item = ItemFactory::get(Item::DIAMOND_PICKAXE);
                 break;
             case "ironaxe":
+                $value = 10;
+                $valueType = Loader::BRONZE;
+                $item = ItemFactory::get(Item::IRON_AXE);
+                break;
+            case "diamondaxe":
                 $value = 5;
-                $valueType = Loader::SILVER;
-                $item = ItemFactory::get(Item::IRON_AXE, 0, 16);
+                $valueType = Loader::GOLD;
+                $item = ItemFactory::get(Item::DIAMOND_AXE);
                 break;
             default:
                 return;

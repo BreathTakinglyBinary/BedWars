@@ -29,6 +29,11 @@ class EventListener implements Listener{
 
     private $blocksPlaced = [];
 
+    /**
+     * @param EntityDamageEvent $event
+     *
+     * @priority HIGHEST
+     */
     public function onDamage(EntityDamageEvent $event){
         $player = $event->getEntity();
         if(!$player instanceof Player){

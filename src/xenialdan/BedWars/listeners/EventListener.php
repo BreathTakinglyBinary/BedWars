@@ -33,6 +33,11 @@ class EventListener implements Listener{
         if(!$player instanceof Player){
             return;
         }
+
+        if($player->getHealth() >= $event->getFinalDamage()){
+            return;
+        }
+
         $arena = API::getArenaByLevel(Loader::getInstance(), $player->getLevel());
         if(!$arena instanceof Arena or $arena->getState() !== Arena::INGAME){
             return;
@@ -42,7 +47,6 @@ class EventListener implements Listener{
         if(!$team instanceof BedwarsTeam){
             return;
         }
-
         if($team->isBedDestroyed()){
             $player->getInventory()->clearAll();
             $player->getArmorInventory()->clearAll();

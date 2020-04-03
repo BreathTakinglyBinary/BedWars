@@ -14,7 +14,7 @@ use pocketmine\utils\TextFormat;
 class ShopMainMenu extends SimpleForm{
 
     public function __construct(?Form $previousForm = null){
-        parent::__construct(TextFormat::DARK_BLUE . "Main Menu");
+        parent::__construct(TextFormat::DARK_BLUE . "Main Menu", $previousForm);
         $this->addButton("Blocks", "blocks");
         $this->addButton("Weapons", "weapons");
         $this->addButton("Armor", "armor");

@@ -6,11 +6,10 @@ namespace xenialdan\BedWars\ui\shop;
 
 use BreathTakinglyBinary\libDynamicForms\Form;
 use BreathTakinglyBinary\libDynamicForms\SimpleForm;
-use pocketmine\Player;
-use pocketmine\utils\TextFormat;
-use xenialdan\BedWars\Loader;
 use BreathTakinglyBinary\minigames\API;
 use BreathTakinglyBinary\minigames\Arena;
+use pocketmine\Player;
+use pocketmine\utils\TextFormat;
 
 class ShopMainMenu extends SimpleForm{
 

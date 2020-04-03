@@ -32,7 +32,7 @@ class ShopMainMenu extends SimpleForm{
     public function onResponse(Player $player, $data) : void{
         $arena = API::getArenaOfPlayer($player);
         if(!$arena instanceof Arena or $arena->getState() !== Arena::INGAME){
-            //return;
+            return;
         }
         switch($data){
             case "blocks":

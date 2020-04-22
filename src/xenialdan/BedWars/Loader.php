@@ -22,6 +22,7 @@ use xenialdan\BedWars\commands\BedwarsCommand;
 use xenialdan\BedWars\listeners\EventListener;
 use xenialdan\BedWars\listeners\JoinGameListener;
 use xenialdan\BedWars\listeners\LeaveGameListener;
+use xenialdan\BedWars\listeners\LobbyListener;
 use xenialdan\BedWars\listeners\NPCListener;
 use xenialdan\BedWars\task\SpawnItemsTask;
 
@@ -61,6 +62,7 @@ class Loader extends Game{
             new EventListener(),
             new JoinGameListener(),
             new LeaveGameListener(),
+            new LobbyListener(),
             new NPCListener()
         ];
         foreach($listeners as $listener){

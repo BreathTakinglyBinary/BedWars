@@ -39,8 +39,7 @@ class EventListener implements Listener{
         if(!$player instanceof Player){
             return;
         }
-
-        if($player->getHealth() >= $event->getFinalDamage()){
+        if($player->getHealth() > $event->getFinalDamage()){
             return;
         }
 

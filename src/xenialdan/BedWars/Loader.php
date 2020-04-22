@@ -60,7 +60,6 @@ class Loader extends Game{
     private function registerListeners() : void{
         $listeners = [
             new EventListener(),
-            new JoinGameListener(),
             new LeaveGameListener(),
             new LobbyListener(),
             new NPCListener()

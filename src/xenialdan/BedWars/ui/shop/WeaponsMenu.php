@@ -18,11 +18,11 @@ class WeaponsMenu extends SimpleForm{
 
     public function __construct(?Form $previousForm = null){
         parent::__construct(TextFormat::DARK_GREEN . "Weapons", $previousForm);
-        $this->addButton(TextFormat::DARK_BLUE . "Stone Sword \n" . TextFormat::DARK_RED . "5 Bronze", "stone");
-        $this->addButton(TextFormat::DARK_BLUE . "Iron Sword \n" . TextFormat::DARK_BLUE . "5 Iron", "iron");
-        $this->addButton(TextFormat::DARK_BLUE . "Diamond Sword \n" . TextFormat::GOLD . "5 Gold", "diamond");
-        $this->addButton(TextFormat::DARK_BLUE . "Bow\n" . TextFormat::DARK_BLUE . "2 Silver", "bow");
-        $this->addButton(TextFormat::DARK_BLUE . "16x Arrows\n" . TextFormat::DARK_RED . "35 Bronze", "arrow");
+        $this->addButton(TextFormat::DARK_BLUE . "Stone Sword \n" . TextFormat::DARK_RED . "5 " . Loader::TIER_1, "stone");
+        $this->addButton(TextFormat::DARK_BLUE . "Iron Sword \n" . TextFormat::DARK_BLUE . "5 " . Loader::TIER_2, "iron");
+        $this->addButton(TextFormat::DARK_BLUE . "Diamond Sword \n" . TextFormat::GOLD . "5 " . Loader::TIER_3, "diamond");
+        $this->addButton(TextFormat::DARK_BLUE . "Bow\n" . TextFormat::DARK_BLUE . "2 " . Loader::TIER_2, "bow");
+        $this->addButton(TextFormat::DARK_BLUE . "16x Arrows\n" . TextFormat::DARK_RED . "35 " . Loader::TIER_1, "arrow");
     }
 
     /**
@@ -38,27 +38,27 @@ class WeaponsMenu extends SimpleForm{
         switch($data){
             case "stone":
                 $value = 5;
-                $valueType = Loader::BRONZE;
+                $valueType = Loader::TIER_1;
                 $item = ItemFactory::get(Item::STONE_SWORD);
                 break;
             case "iron":
                 $value = 5;
-                $valueType = Loader::SILVER;
+                $valueType = Loader::TIER_2;
                 $item = ItemFactory::get(Item::IRON_SWORD);
                 break;
             case "diamond":
                 $value = 5;
-                $valueType = Loader::GOLD;
+                $valueType = Loader::TIER_3;
                 $item = ItemFactory::get(Item::DIAMOND_SWORD);
                 break;
             case "bow":
                 $value = 2;
-                $valueType = Loader::SILVER;
+                $valueType = Loader::TIER_2;
                 $item = ItemFactory::get(Item::BOW);
                 break;
             case "arrow":
                 $value = 35;
-                $valueType = Loader::BRONZE;
+                $valueType = Loader::TIER_1;
                 $item = ItemFactory::get(Item::ARROW, 0, 16);
                 break;
             default:

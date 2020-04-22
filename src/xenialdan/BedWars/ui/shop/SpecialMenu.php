@@ -20,10 +20,10 @@ class SpecialMenu extends SimpleForm{
 
     public function __construct(?Form $previousForm = null){
         parent::__construct(TextFormat::DARK_GREEN . "Special Items", $previousForm);
-        $this->addButton(TextFormat::DARK_BLUE . "Ender Pearl\n" . TextFormat::GOLD . "5 Gold", "epearl");
-        $this->addButton(TextFormat::DARK_BLUE . "10x Snowballs\n" . TextFormat::GOLD . "3 Gold", "snowballs");
-        $this->addButton(TextFormat::DARK_BLUE . "Enchanted Bow\n" . TextFormat::GOLD . "20 Gold", "ebow");
-        $this->addButton(TextFormat::DARK_BLUE . "Enchanted Sword\n" . TextFormat::GOLD . "20 Gold", "esword");
+        $this->addButton(TextFormat::DARK_BLUE . "Ender Pearl\n" . TextFormat::GOLD . "5 " . Loader::TIER_3, "epearl");
+        $this->addButton(TextFormat::DARK_BLUE . "10x Snowballs\n" . TextFormat::GOLD . "3 " . Loader::TIER_3, "snowballs");
+        $this->addButton(TextFormat::DARK_BLUE . "Enchanted Bow\n" . TextFormat::GOLD . "20 " . Loader::TIER_3, "ebow");
+        $this->addButton(TextFormat::DARK_BLUE . "Enchanted Sword\n" . TextFormat::GOLD . "20 " . Loader::TIER_3, "esword");
     }
 
     /**
@@ -39,24 +39,24 @@ class SpecialMenu extends SimpleForm{
         switch($data){
             case "epearl":
                 $value = 5;
-                $valueType = Loader::GOLD;
+                $valueType = Loader::TIER_3;
                 $item = ItemFactory::get(Item::ENDER_PEARL);
                 break;
             case "snowballs":
                 $value = 3;
-                $valueType = Loader::GOLD;
+                $valueType = Loader::TIER_3;
                 $item = ItemFactory::get(Item::SNOWBALL, 0, 8);
                 break;
             case "ebow":
                 $value = 20;
-                $valueType = Loader::GOLD;
+                $valueType = Loader::TIER_3;
                 $item = ItemFactory::get(Item::BOW);
                 $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::POWER), 2));
                 $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::PUNCH), 1));
                 break;
             case "esword":
                 $value = 20;
-                $valueType = Loader::GOLD;
+                $valueType = Loader::TIER_3;
                 $item = ItemFactory::get(Item::DIAMOND_SWORD);
                 $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::SHARPNESS), 2));
                 $item->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::KNOCKBACK), 1));

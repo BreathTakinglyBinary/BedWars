@@ -18,9 +18,9 @@ class ArmorMenu extends SimpleForm{
 
     public function __construct(?Form $previousForm = null){
         parent::__construct(TextFormat::GOLD . "Armor", $previousForm);
-        $this->addButton(TextFormat::DARK_BLUE . "Chain \n" . TextFormat::DARK_RED . "30 Bronze", "chain");
-        $this->addButton(TextFormat::DARK_BLUE . "Iron \n" . TextFormat::DARK_BLUE . "30 Silver", "iron");
-        $this->addButton(TextFormat::DARK_BLUE . "Diamond\n" . TextFormat::GOLD . "20 GOLD", "diamond");
+        $this->addButton(TextFormat::DARK_BLUE . "Chain \n" . TextFormat::DARK_RED . "30 " . Loader::TIER_1, "chain");
+        $this->addButton(TextFormat::DARK_BLUE . "Iron \n" . TextFormat::DARK_BLUE . "30 " . Loader::TIER_2, "iron");
+        $this->addButton(TextFormat::DARK_BLUE . "Diamond\n" . TextFormat::GOLD . "20 " . Loader::TIER_3, "diamond");
     }
 
     /**
@@ -36,7 +36,7 @@ class ArmorMenu extends SimpleForm{
         switch($data){
             case "chain":
                 $value = 30;
-                $valueType = Loader::BRONZE;
+                $valueType = Loader::TIER_1;
                 $items = [
                     ItemFactory::get(Item::CHAIN_HELMET),
                     ItemFactory::get(Item::CHAIN_CHESTPLATE),
@@ -46,7 +46,7 @@ class ArmorMenu extends SimpleForm{
                 break;
             case "iron":
                 $value = 30;
-                $valueType = Loader::SILVER;
+                $valueType = Loader::TIER_2;
                 $items = [
                     ItemFactory::get(Item::IRON_HELMET),
                     ItemFactory::get(Item::IRON_CHESTPLATE),
@@ -56,7 +56,7 @@ class ArmorMenu extends SimpleForm{
                 break;
             case "diamond":
                 $value = 20;
-                $valueType = Loader::GOLD;
+                $valueType = Loader::TIER_3;
                 $items = [
                     ItemFactory::get(Item::DIAMOND_HELMET),
                     ItemFactory::get(Item::DIAMOND_CHESTPLATE),

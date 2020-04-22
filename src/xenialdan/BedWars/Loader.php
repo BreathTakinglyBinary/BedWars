@@ -2,6 +2,10 @@
 
 namespace xenialdan\BedWars;
 
+use BreathTakinglyBinary\minigames\API;
+use BreathTakinglyBinary\minigames\Arena;
+use BreathTakinglyBinary\minigames\Game;
+use BreathTakinglyBinary\minigames\Team;
 use pocketmine\entity\Entity;
 use pocketmine\entity\object\ItemEntity;
 use pocketmine\entity\object\PrimedTNT;
@@ -20,15 +24,11 @@ use xenialdan\BedWars\listeners\JoinGameListener;
 use xenialdan\BedWars\listeners\LeaveGameListener;
 use xenialdan\BedWars\listeners\NPCListener;
 use xenialdan\BedWars\task\SpawnItemsTask;
-use BreathTakinglyBinary\minigames\API;
-use BreathTakinglyBinary\minigames\Arena;
-use BreathTakinglyBinary\minigames\Game;
-use BreathTakinglyBinary\minigames\Team;
 
 class Loader extends Game{
-    const BRONZE = "Bronze";
-    const SILVER = "Silver";
-    const GOLD = "Gold";
+    const TIER_1 = "Coins";
+    const TIER_2 = "Pearls";
+    const TIER_3 = "Emeralds";
 
     /** @var Loader */
     private static $instance = null;
@@ -136,7 +136,7 @@ class Loader extends Game{
     public function stopArena(Arena $arena) : void{
     }
 
-    public function spawnBronze(Arena $arena){
+    public function spawnTier1(Arena $arena){
         /** @var BedwarsSettings $settings */
         $settings = $arena->getSettings();
         foreach($settings->bronze ?? [] as $i => $spawn){
@@ -148,7 +148,7 @@ class Loader extends Game{
                 $last = null;
                 foreach($arena->getLevel()->getChunkEntities($v->x >> 4, $v->z >> 4) as $chunkEntity){
                     if(!$chunkEntity instanceof ItemEntity) continue;
-                    if($chunkEntity->getItem()->getId() === ItemIds::BRICK){
+                    if($chunkEntity->getItem()->getId() === ItemIds::DOUBLE_PLANT){
                         if($last === null || $last->getItem()->getCount() >= 64){
                             $last = $chunkEntity;
                             continue;
@@ -165,29 +165,29 @@ class Loader extends Game{
                 }
             }
 
-            $arena->getLevel()->dropItem($v, (new Item(ItemIds::BRICK))->setCount(1)->setCustomName(TextFormat::GOLD . "Bronze"));
+            $arena->getLevel()->dropItem($v, (new Item(ItemIds::DOUBLE_PLANT))->setCount(1)->setCustomName(TextFormat::GOLD . "Coin"));
             $arena->getLevel()->broadcastLevelSoundEvent($v, LevelSoundEventPacket::SOUND_DROP_SLOT);
         }
     }
 
-    public function spawnSilver(Arena $arena){
+    public function spawnTier2(Arena $arena){
         /** @var BedwarsSettings $settings */
         $settings = $arena->getSettings();
         foreach($settings->silver ?? [] as $i => $spawn){
             $v = new Vector3($spawn["x"] + 0.5, $spawn["y"] + 1, $spawn["z"] + 0.5);
             if(!$arena->getLevel()->isChunkLoaded($v->x >> 4, $v->z >> 4)) $arena->getLevel()->loadChunk($v->x >> 4, $v->z >> 4);
-            $arena->getLevel()->dropItem($v, (new Item(ItemIds::IRON_INGOT))->setCustomName(TextFormat::GRAY . "Silver"));
+            $arena->getLevel()->dropItem($v, (new Item(ItemIds::HEART_OF_THE_SEA))->setCustomName(TextFormat::WHITE . "Pearl"));
             $arena->getLevel()->broadcastLevelSoundEvent($v, LevelSoundEventPacket::SOUND_DROP_SLOT);
         }
     }
 
-    public function spawnGold(Arena $arena){
+    public function spawnTier3(Arena $arena){
         /** @var BedwarsSettings $settings */
         $settings = $arena->getSettings();
         foreach($settings->gold ?? [] as $i => $spawn){
             $v = new Vector3($spawn["x"] + 0.5, $spawn["y"] + 1, $spawn["z"] + 0.5);
             if(!$arena->getLevel()->isChunkLoaded($v->x >> 4, $v->z >> 4)) $arena->getLevel()->loadChunk($v->x >> 4, $v->z >> 4);
-            $arena->getLevel()->dropItem($v, (new Item(ItemIds::GOLD_INGOT))->setCustomName(TextFormat::YELLOW . "Gold"));
+            $arena->getLevel()->dropItem($v, (new Item(ItemIds::EMERALD))->setCustomName(TextFormat::GREEN . "Emerald"));
             $arena->getLevel()->broadcastLevelSoundEvent($v, LevelSoundEventPacket::SOUND_DROP_SLOT);
         }
     }
@@ -214,14 +214,14 @@ class Loader extends Game{
     public static function buyItem(Item $item, Player $player, string $valueType, int $value) : bool{
         $item = $item->setLore([]);
         switch($valueType){
-            case self::BRONZE:
-                $id = ItemIds::BRICK;
+            case self::TIER_1:
+                $id = ItemIds::DOUBLE_PLANT;
                 break;
-            case self::SILVER:
-                $id = ItemIds::IRON_INGOT;
+            case self::TIER_2:
+                $id = ItemIds::HEART_OF_THE_SEA;
                 break;
-            case self::GOLD:
-                $id = ItemIds::GOLD_INGOT;
+            case self::TIER_3:
+                $id = ItemIds::EMERALD;
                 break;
             default:
                 throw new \InvalidArgumentException("ValueType is wrong");

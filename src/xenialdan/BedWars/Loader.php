@@ -20,7 +20,6 @@ use pocketmine\Player;
 use pocketmine\utils\TextFormat;
 use xenialdan\BedWars\commands\BedwarsCommand;
 use xenialdan\BedWars\listeners\EventListener;
-use xenialdan\BedWars\listeners\JoinGameListener;
 use xenialdan\BedWars\listeners\LeaveGameListener;
 use xenialdan\BedWars\listeners\LobbyListener;
 use xenialdan\BedWars\listeners\NPCListener;

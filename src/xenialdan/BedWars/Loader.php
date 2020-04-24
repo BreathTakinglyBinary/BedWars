@@ -139,7 +139,7 @@ class Loader extends Game{
     public function spawnTier1(Arena $arena){
         /** @var BedwarsSettings $settings */
         $settings = $arena->getSettings();
-        foreach($settings->bronze ?? [] as $i => $spawn){
+        foreach($settings->tier1 ?? [] as $i => $spawn){
             $v = new Vector3($spawn["x"] + 0.5, $spawn["y"] + 1, $spawn["z"] + 0.5);
             if(!$arena->getLevel()->isChunkLoaded($v->x >> 4, $v->z >> 4)) $arena->getLevel()->loadChunk($v->x >> 4, $v->z >> 4);
             //Stack items if too many
@@ -173,7 +173,7 @@ class Loader extends Game{
     public function spawnTier2(Arena $arena){
         /** @var BedwarsSettings $settings */
         $settings = $arena->getSettings();
-        foreach($settings->silver ?? [] as $i => $spawn){
+        foreach($settings->tier2 ?? [] as $i => $spawn){
             $v = new Vector3($spawn["x"] + 0.5, $spawn["y"] + 1, $spawn["z"] + 0.5);
             if(!$arena->getLevel()->isChunkLoaded($v->x >> 4, $v->z >> 4)) $arena->getLevel()->loadChunk($v->x >> 4, $v->z >> 4);
             $arena->getLevel()->dropItem($v, (new Item(ItemIds::HEART_OF_THE_SEA))->setCustomName(TextFormat::WHITE . "Pearl"));
@@ -184,7 +184,7 @@ class Loader extends Game{
     public function spawnTier3(Arena $arena){
         /** @var BedwarsSettings $settings */
         $settings = $arena->getSettings();
-        foreach($settings->gold ?? [] as $i => $spawn){
+        foreach($settings->tier3 ?? [] as $i => $spawn){
             $v = new Vector3($spawn["x"] + 0.5, $spawn["y"] + 1, $spawn["z"] + 0.5);
             if(!$arena->getLevel()->isChunkLoaded($v->x >> 4, $v->z >> 4)) $arena->getLevel()->loadChunk($v->x >> 4, $v->z >> 4);
             $arena->getLevel()->dropItem($v, (new Item(ItemIds::EMERALD))->setCustomName(TextFormat::GREEN . "Emerald"));

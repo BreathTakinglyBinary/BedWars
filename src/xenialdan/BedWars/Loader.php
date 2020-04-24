@@ -165,7 +165,7 @@ class Loader extends Game{
                 }
             }
 
-            $arena->getLevel()->dropItem($v, (new Item(ItemIds::DOUBLE_PLANT))->setCount(1)->setCustomName(TextFormat::GOLD . "Coin"));
+            $arena->getLevel()->dropItem($v, (new Item(ItemIds::DOUBLE_PLANT))->setCount(1)->setCustomName(TextFormat::GOLD . "Coin"), new Vector3(0, -2, 0));
             $arena->getLevel()->broadcastLevelSoundEvent($v, LevelSoundEventPacket::SOUND_DROP_SLOT);
         }
     }
@@ -176,7 +176,7 @@ class Loader extends Game{
         foreach($settings->tier2 ?? [] as $i => $spawn){
             $v = new Vector3($spawn["x"] + 0.5, $spawn["y"] + 1, $spawn["z"] + 0.5);
             if(!$arena->getLevel()->isChunkLoaded($v->x >> 4, $v->z >> 4)) $arena->getLevel()->loadChunk($v->x >> 4, $v->z >> 4);
-            $arena->getLevel()->dropItem($v, (new Item(ItemIds::HEART_OF_THE_SEA))->setCustomName(TextFormat::WHITE . "Pearl"));
+            $arena->getLevel()->dropItem($v, (new Item(ItemIds::HEART_OF_THE_SEA))->setCustomName(TextFormat::WHITE . "Pearl"), new Vector3(0, -2, 0));
             $arena->getLevel()->broadcastLevelSoundEvent($v, LevelSoundEventPacket::SOUND_DROP_SLOT);
         }
     }
@@ -187,7 +187,7 @@ class Loader extends Game{
         foreach($settings->tier3 ?? [] as $i => $spawn){
             $v = new Vector3($spawn["x"] + 0.5, $spawn["y"] + 1, $spawn["z"] + 0.5);
             if(!$arena->getLevel()->isChunkLoaded($v->x >> 4, $v->z >> 4)) $arena->getLevel()->loadChunk($v->x >> 4, $v->z >> 4);
-            $arena->getLevel()->dropItem($v, (new Item(ItemIds::EMERALD))->setCustomName(TextFormat::GREEN . "Emerald"));
+            $arena->getLevel()->dropItem($v, (new Item(ItemIds::EMERALD))->setCustomName(TextFormat::GREEN . "Emerald"), new Vector3(0, -2, 0));
             $arena->getLevel()->broadcastLevelSoundEvent($v, LevelSoundEventPacket::SOUND_DROP_SLOT);
         }
     }

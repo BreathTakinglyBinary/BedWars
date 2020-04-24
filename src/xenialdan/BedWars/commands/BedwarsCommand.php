@@ -80,18 +80,6 @@ class BedwarsCommand extends PluginCommand{
                     if(API::isPlaying($sender, $this->getPlugin())) $arena->removePlayer($sender);
                     break;
                 }
-                case "endsetup":
-                {
-                    if(!$sender->hasPermission("bedwars.command.endsetup")){//TODO only when setup
-                        $sender->sendMessage(TextFormat::RED . "You do not have permissions to run this command");
-
-                        return true;
-                    }
-                    /** @var Game $p */
-                    $p = $this->getPlugin();
-                    $p->endSetupArena($sender);
-                    break;
-                }
                 case "stop":
                 {
                     if(!$sender->hasPermission("bedwars.command.stop")){
